@@ -20,11 +20,18 @@ export class LoginComponent {
 
     onSubmit(): void {
         this.error = null;
+
+        if (!this.email || !this.password) {
+            this.error = 'Enter your email and password';
+            return;
+        }
+
         this.authService.login(this.email, this.password).subscribe({
         next: (res) => {
             this.authService.setToken(res.token);
             // After logging in, we redirect you to the dashboard.
-            this.router.navigate(['/dashboard']);
+            
+            this.router.navigate(['/dashboard/client']);
         },
         error: (err) => {
             this.error = 'Invalid email or password';

@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { User } from '../../../models/user.model';
 import { FormsModule } from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +24,15 @@ export class RegisterComponent {
         this.authService.register(this.user as User).subscribe({
         next: (res) => {
             this.authService.setToken(res.token);
-            this.router.navigate(['/dashboard']);
+
+            const decoded: any = jwtDecode(res.token);
+            const role = decoded.role;
+
+            if (role === 'ROLE_ADMIN') {
+            this.router.navigate(['/dashboard/admin']);
+            } else {
+            this.router.navigate(['/dashboard/client']);
+            }
         },
         error: (err) => {
             this.error = 'Registration error. Please check your details.';
